@@ -12,6 +12,14 @@ const rizzLines = {
   Beta: "Ah, the human doormat. You say 'yes' before the question is even finished. The highlight of your week? Being noticed when tagged in a meme. Side quest character energy, 24/7.",
 };
 
+// Map of image extensions (Alpha asset is a .jpg, others are .png)
+const maleImageExt = { Alpha: 'jpg', Beta: 'png', Sigma: 'png', Gigachad: 'png' };
+
+function getMaleImagePath(type) {
+  const ext = maleImageExt[type] || 'png';
+  return `pics/${type}.${ext}`;
+}
+
 const nameInput = document.getElementById("js-name-input");
 const dobInput = document.getElementById("js-dob-input");
 const submitButton = document.getElementById("submit-btn");
@@ -50,9 +58,9 @@ function getMaleType(nameInput, dobInput) {
 
   const score = nameLength * 2 + (nameSum % 50) + (dateSum % 30);
 
-  if (score <= 50) maleType = "Beta";
-  else if (score <= 75) maleType = "Alpha";
-  else if (score <= 90) maleType = "Sigma";
+  if (score <= 65) maleType = "Beta";
+  else if (score <= 80) maleType = "Alpha";
+  else if (score <= 95) maleType = "Sigma";
   else maleType = "Gigachad";
   
   renderResultPage(maleType, rizzLines[maleType], score);
@@ -61,6 +69,11 @@ function getMaleType(nameInput, dobInput) {
 function renderResultPage(maleType, rizzline, score) {
   const resultElement = document.querySelector(".js-result");
   const inputScreen= document.querySelector('.js-input-screen');
+  const resultDiv=document.querySelector('.js-result-div');
+  
+  // Show result div with proper flex layout
+  resultDiv.classList.remove('hidden');
+  resultDiv.classList.add('flex');
   inputScreen.classList.add('hidden');
   
   if (!resultElement) {
@@ -68,57 +81,45 @@ function renderResultPage(maleType, rizzline, score) {
     return;
   }
   
+  const displayScore = Math.min(score, 100); // clamp just in case
+  const imagePath = getMaleImagePath(maleType);
+
   resultElement.innerHTML = `
-      <div class="flex justify-center mb-6">
-        <img src="pics/${maleType}.png" class="w-32 h-32 rounded-full object-cover border-4 border-gray-400">
+    <div class="flex flex-col items-center justify-center h-full w-full overflow-y-auto">
+      <!-- Avatar -->
+      <div class="flex justify-center mb-3">
+        <img src="${imagePath}" alt="${maleType} avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-gray-400 shadow-lg" onerror="this.style.display='none'">
       </div>
       
-      <div class="text-center mb-6">
-        <h1 class="text-4xl font-bold text-white mb-2">Your Result</h1>
-        <div class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
+      <!-- Title and Type -->
+      <div class="text-center mb-3">
+        <h1 class="text-xl sm:text-2xl font-bold text-white mb-1">Your Result</h1>
+        <div class="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-white">
           ${maleType}
         </div>
       </div>
       
-      <div class="rizz-lines text-center mb-8 max-w-2xl">
-        ${(() => {
-          const sentences = rizzline.split(/[.!?]\s+/);
-          if (sentences.length >= 2) {
-            const firstPart = sentences.slice(0, Math.ceil(sentences.length / 2)).join('. ') + '.';
-            const secondPart = sentences.slice(Math.ceil(sentences.length / 2)).join('. ') + '.';
-            return `
-              <p class="text-white text-lg mb-3">${firstPart}</p>
-              <p class="text-white text-lg mb-3">${secondPart}</p>
-            `;
-          } else {
-            // If no proper sentences found, split roughly in the middle
-            const midPoint = Math.floor(rizzline.length / 2);
-            const spaceIndex = rizzline.indexOf(' ', midPoint);
-            const splitPoint = spaceIndex !== -1 ? spaceIndex : midPoint;
-            
-            const firstPart = rizzline.substring(0, splitPoint);
-            const secondPart = rizzline.substring(splitPoint + 1);
-            
-            return `
-              <p class="text-white text-lg mb-3">${firstPart}</p>
-              <p class="text-white text-lg mb-3">${secondPart}</p>
-            `;
-          }
-        })()}
-      </div>
-      
-      <div class="bg-white/20 rounded-xl p-4 mb-6">
-        <div class="text-white text-center mt-2">
-          <span class="text-2xl font-bold">${score}</span>
-          <span class="text-lg">/100</span>
+      <!-- Rizz Lines -->
+      <div class="text-center mb-3 px-3 max-w-sm mx-auto">
+        <div class="text-white text-xs sm:text-sm leading-relaxed">
+          ${rizzline}
         </div>
       </div>
       
-      <div class="flex gap-4">
-        <button onclick="window.location.href='./index.html'" class="px-8 py-3 border-2 border-gray-400 text-white font-bold rounded-xl hover:bg-gray-500/20 hover:border-gray-300 active:bg-gray-600/30 active:scale-95 transition-all duration-200">
+      <!-- Score -->
+      <div class="bg-white/20 backdrop-blur-sm rounded-lg p-2 mb-3 border border-white/30">
+        <div class="text-white text-center">
+          <span class="text-lg sm:text-xl font-bold">${displayScore}</span>
+          <span class="text-sm sm:text-base opacity-80">/100</span>
+        </div>
+      </div>
+      
+      <!-- Button -->
+      <div>
+        <button onclick="window.location.reload()" class="px-4 py-2 sm:px-6 sm:py-2 border-2 border-gray-400 text-white font-bold rounded-lg hover:bg-gray-500/20 hover:border-gray-300 active:bg-gray-600/30 active:scale-95 transition-all duration-200 text-xs sm:text-sm">
           Test Again
         </button>
       </div>
+    </div>
   `;
 }
-
