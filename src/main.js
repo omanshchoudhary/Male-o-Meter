@@ -88,7 +88,7 @@ function renderResultPage(maleType, rizzline, score) {
     <div class="flex flex-col items-center justify-center h-full w-full overflow-y-auto">
       <!-- Avatar -->
       <div class="flex justify-center mb-3">
-        <img src="${imagePath}" alt="${maleType} avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-gray-400 shadow-lg" onerror="this.style.display='none'">
+        <img src="/${imagePath}" alt="${maleType} avatar" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-gray-400 shadow-lg" onerror="this.style.display='none'">
       </div>
       
       <!-- Title and Type -->
