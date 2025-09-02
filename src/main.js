@@ -60,7 +60,7 @@ function getMaleType(nameInput, dobInput) {
 
   if (score <= 65) maleType = "Beta";
   else if (score <= 80) maleType = "Alpha";
-  else if (score <= 95) maleType = "Sigma";
+  else if (score <= 90) maleType = "Sigma";
   else maleType = "Gigachad";
   
   renderResultPage(maleType, rizzLines[maleType], score);
